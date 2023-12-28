@@ -24,7 +24,7 @@ depends=("\${MINGW_PACKAGE_PREFIX}-freetype"
          "\${MINGW_PACKAGE_PREFIX}-fontconfig")
 checkdepends=("\${MINGW_PACKAGE_PREFIX}-ttf-dejavu")
 optdepends=("\${MINGW_PACKAGE_PREFIX}-ncurses: for alacritty terminfo database")
-source=("https://github.com/alacritty/alacritty/archive/v\${pkgver}/\${_realname}-\${pkgver}.tar.gz")
+source=("https://github.com/alacritty/alacritty/archive/refs/tags/v\${pkgver}/\${_realname}-\${pkgver}.tar.gz")
 validpgpkeys=('4DAA67A9EA8B91FCC15B699C85CDAE3C164BA7B4'  # Christian Dürr <contact@christianduerr.com>
               'A56EF308A9F1256C25ACA3807EA8F8B94622A6A9') # Kirill Chibisov <contact@kchibisov.com>
 sha256sums=('7825639d971e561b2ea3cc41e30b57cde8e185a400fee001843bb634df6b28ab')
