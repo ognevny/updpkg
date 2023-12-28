@@ -57,7 +57,7 @@ fn main() {
                 .args([
                     "-i",
                     "-e",
-                    &format!("s|^_commit=.*|_commit={ver}|; s|^pkgrel=.*|pkgrel=1|"),
+                    &format!("s|^pkgver=.*|pkgver={ver}|; s|^pkgrel=.*|pkgrel=1|"),
                     "PKGBUILD",
                 ])
                 .status() {
