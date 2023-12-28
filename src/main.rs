@@ -53,15 +53,17 @@ fn main() {
         if let Some(ver) = version {
             info!("setting pkgver as {ver}, setting pkgrel as 1");
             // assuming sed doesn't fail
-            Command::new("sed")
+            match Command::new("/usr/bin/sed")
                 .args([
                     "-i",
                     "-e",
-                    &format!("s|^pkgver=.*|pkgver={ver}|; s|^pkgrel=.*|pkgrel=1|"),
+                    &format!("s|^_commit=.*|_commit={ver}|; s|^pkgrel=.*|pkgrel=1|"),
                     "PKGBUILD",
                 ])
-                .status()
-                .unwrap();
+                .status() {
+                    Ok(_) => (),
+                    Err(e) => error!("couldn't sed PKGBUILD: {e}"),
+                }
         }
     // bless clippy
     } else if git {
