@@ -31,9 +31,10 @@ jobs:
             fontconfig:p
             git
       - name: build
-        run: cargo b -v --locked
+        run: msys2 -c 'cargo b -v --locked'
       - name: fmt and clippy check
         if: ${{ matrix.toolchain == 'nightly' }}
-        run: cargo fmt -- --check ; cargo clippy --locked -- -D warnings
+        run: msys2 -c 'cargo fmt -- --check ; cargo clippy --locked -- -D warnings'
       - name: test
+        shell: msys {0}
         run: cargo t --locked --test '*'
