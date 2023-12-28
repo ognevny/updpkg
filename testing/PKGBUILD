@@ -2,8 +2,8 @@
 _realname=alacritty
 pkgbase=mingw-w64-
 pkgname="-"
-pkgver=0.12.3
-pkgrel=3
+pkgver=0.13.0
+pkgrel=1
 pkgdesc="A cross-platform, OpenGL terminal emulator (mingw-w64)"
 arch=('any')
 mingw_arch=('mingw64' 'ucrt64' 'clang64' 'clangarm64')
@@ -54,4 +54,346 @@ package() {
   cd "/-"
 
   install -Dm755 "target/release/.exe" "/bin/.exe"
+}
+
+_realname=alacritty
+pkgbase=mingw-w64-
+pkgname="mingw-w64-clang-x86_64-"
+pkgver=0.13.0
+pkgrel=1
+pkgdesc="A cross-platform, OpenGL terminal emulator (mingw-w64)"
+arch=('any')
+mingw_arch=('mingw64' 'ucrt64' 'clang64' 'clangarm64')
+url="https://alacritty.org"
+msys2_repository_url="https://github.com/alacritty/alacritty"
+license=('spdx:Apache-2.0 OR MIT')
+makedepends=("mingw-w64-clang-x86_64-rust"
+             "mingw-w64-clang-x86_64-cmake"
+             "mingw-w64-clang-x86_64-ncurses"
+             "mingw-w64-clang-x86_64-desktop-file-utils"
+             'git')
+depends=("mingw-w64-clang-x86_64-freetype"
+         "mingw-w64-clang-x86_64-fontconfig")
+checkdepends=("mingw-w64-clang-x86_64-ttf-dejavu")
+optdepends=("mingw-w64-clang-x86_64-ncurses: for alacritty terminfo database")
+source=("https://github.com/alacritty/alacritty/archive/v/-.tar.gz")
+validpgpkeys=('4DAA67A9EA8B91FCC15B699C85CDAE3C164BA7B4'  # Christian Dürr <contact@christianduerr.com>
+              'A56EF308A9F1256C25ACA3807EA8F8B94622A6A9') # Kirill Chibisov <contact@kchibisov.com>
+sha256sums=('7825639d971e561b2ea3cc41e30b57cde8e185a400fee001843bb634df6b28ab')
+noextract=("-.tar.gz")
+
+prepare() {
+  cd ""
+  tar -xzf "-.tar.gz"
+  cd "/-"
+
+  local _target="-pc-windows-gnu"
+  # https://github.com/msys2/MINGW-packages/pull/17827#issuecomment-1646226014
+  # if [[ mingw-w64-clang-x86_64 == *-clang-aarch64 ]]; then
+    # _target="-pc-windows-gnullvm"
+  # fi
+  cargo fetch --locked --target ""
+}
+
+build() {
+  cd "/-"
+
+  WINAPI_NO_BUNDLED_LIBRARIES=1     "C:/msys64/clang64/bin/cargo.exe" build     --release     --locked
+}
+
+check() {
+  cd "/-"
+
+  WINAPI_NO_BUNDLED_LIBRARIES=1   "C:/msys64/clang64/bin/cargo.exe" test     --release     --locked
+}
+
+package() {
+  cd "/-"
+
+  install -Dm755 "target/release/.exe" "C:/msys64/clang64/bin/.exe"
+}
+
+_realname=alacritty
+pkgbase=mingw-w64-
+pkgname="mingw-w64-clang-x86_64-"
+pkgver=0.13.0
+pkgrel=1
+pkgdesc="A cross-platform, OpenGL terminal emulator (mingw-w64)"
+arch=('any')
+mingw_arch=('mingw64' 'ucrt64' 'clang64' 'clangarm64')
+url="https://alacritty.org"
+msys2_repository_url="https://github.com/alacritty/alacritty"
+license=('spdx:Apache-2.0 OR MIT')
+makedepends=("mingw-w64-clang-x86_64-rust"
+             "mingw-w64-clang-x86_64-cmake"
+             "mingw-w64-clang-x86_64-ncurses"
+             "mingw-w64-clang-x86_64-desktop-file-utils"
+             'git')
+depends=("mingw-w64-clang-x86_64-freetype"
+         "mingw-w64-clang-x86_64-fontconfig")
+checkdepends=("mingw-w64-clang-x86_64-ttf-dejavu")
+optdepends=("mingw-w64-clang-x86_64-ncurses: for alacritty terminfo database")
+source=("https://github.com/alacritty/alacritty/archive/v/-.tar.gz")
+validpgpkeys=('4DAA67A9EA8B91FCC15B699C85CDAE3C164BA7B4'  # Christian Dürr <contact@christianduerr.com>
+              'A56EF308A9F1256C25ACA3807EA8F8B94622A6A9') # Kirill Chibisov <contact@kchibisov.com>
+sha256sums=('7825639d971e561b2ea3cc41e30b57cde8e185a400fee001843bb634df6b28ab')
+noextract=("-.tar.gz")
+
+prepare() {
+  cd ""
+  tar -xzf "-.tar.gz"
+  cd "/-"
+
+  local _target="-pc-windows-gnu"
+  # https://github.com/msys2/MINGW-packages/pull/17827#issuecomment-1646226014
+  # if [[ mingw-w64-clang-x86_64 == *-clang-aarch64 ]]; then
+    # _target="-pc-windows-gnullvm"
+  # fi
+  cargo fetch --locked --target ""
+}
+
+build() {
+  cd "/-"
+
+  WINAPI_NO_BUNDLED_LIBRARIES=1     "C:/msys64/clang64/bin/cargo.exe" build     --release     --locked
+}
+
+check() {
+  cd "/-"
+
+  WINAPI_NO_BUNDLED_LIBRARIES=1   "C:/msys64/clang64/bin/cargo.exe" test     --release     --locked
+}
+
+package() {
+  cd "/-"
+
+  install -Dm755 "target/release/.exe" "C:/msys64/clang64/bin/.exe"
+}
+
+_realname=alacritty
+pkgbase=mingw-w64-
+pkgname="mingw-w64-clang-x86_64-"
+pkgver=0.13.0
+pkgrel=1
+pkgdesc="A cross-platform, OpenGL terminal emulator (mingw-w64)"
+arch=('any')
+mingw_arch=('mingw64' 'ucrt64' 'clang64' 'clangarm64')
+url="https://alacritty.org"
+msys2_repository_url="https://github.com/alacritty/alacritty"
+license=('spdx:Apache-2.0 OR MIT')
+makedepends=("mingw-w64-clang-x86_64-rust"
+             "mingw-w64-clang-x86_64-cmake"
+             "mingw-w64-clang-x86_64-ncurses"
+             "mingw-w64-clang-x86_64-desktop-file-utils"
+             'git')
+depends=("mingw-w64-clang-x86_64-freetype"
+         "mingw-w64-clang-x86_64-fontconfig")
+checkdepends=("mingw-w64-clang-x86_64-ttf-dejavu")
+optdepends=("mingw-w64-clang-x86_64-ncurses: for alacritty terminfo database")
+source=("https://github.com/alacritty/alacritty/archive/v/-.tar.gz")
+validpgpkeys=('4DAA67A9EA8B91FCC15B699C85CDAE3C164BA7B4'  # Christian Dürr <contact@christianduerr.com>
+              'A56EF308A9F1256C25ACA3807EA8F8B94622A6A9') # Kirill Chibisov <contact@kchibisov.com>
+sha256sums=('7825639d971e561b2ea3cc41e30b57cde8e185a400fee001843bb634df6b28ab')
+noextract=("-.tar.gz")
+
+prepare() {
+  cd ""
+  tar -xzf "-.tar.gz"
+  cd "/-"
+
+  local _target="-pc-windows-gnu"
+  # https://github.com/msys2/MINGW-packages/pull/17827#issuecomment-1646226014
+  # if [[ mingw-w64-clang-x86_64 == *-clang-aarch64 ]]; then
+    # _target="-pc-windows-gnullvm"
+  # fi
+  cargo fetch --locked --target ""
+}
+
+build() {
+  cd "/-"
+
+  WINAPI_NO_BUNDLED_LIBRARIES=1     "C:/msys64/clang64/bin/cargo.exe" build     --release     --locked
+}
+
+check() {
+  cd "/-"
+
+  WINAPI_NO_BUNDLED_LIBRARIES=1   "C:/msys64/clang64/bin/cargo.exe" test     --release     --locked
+}
+
+package() {
+  cd "/-"
+
+  install -Dm755 "target/release/.exe" "C:/msys64/clang64/bin/.exe"
+}
+
+_realname=alacritty
+pkgbase=mingw-w64-
+pkgname="mingw-w64-clang-x86_64-"
+pkgver=0.13.0
+pkgrel=1
+pkgdesc="A cross-platform, OpenGL terminal emulator (mingw-w64)"
+arch=('any')
+mingw_arch=('mingw64' 'ucrt64' 'clang64' 'clangarm64')
+url="https://alacritty.org"
+msys2_repository_url="https://github.com/alacritty/alacritty"
+license=('spdx:Apache-2.0 OR MIT')
+makedepends=("mingw-w64-clang-x86_64-rust"
+             "mingw-w64-clang-x86_64-cmake"
+             "mingw-w64-clang-x86_64-ncurses"
+             "mingw-w64-clang-x86_64-desktop-file-utils"
+             'git')
+depends=("mingw-w64-clang-x86_64-freetype"
+         "mingw-w64-clang-x86_64-fontconfig")
+checkdepends=("mingw-w64-clang-x86_64-ttf-dejavu")
+optdepends=("mingw-w64-clang-x86_64-ncurses: for alacritty terminfo database")
+source=("https://github.com/alacritty/alacritty/archive/v/-.tar.gz")
+validpgpkeys=('4DAA67A9EA8B91FCC15B699C85CDAE3C164BA7B4'  # Christian Dürr <contact@christianduerr.com>
+              'A56EF308A9F1256C25ACA3807EA8F8B94622A6A9') # Kirill Chibisov <contact@kchibisov.com>
+sha256sums=('7825639d971e561b2ea3cc41e30b57cde8e185a400fee001843bb634df6b28ab')
+noextract=("-.tar.gz")
+
+prepare() {
+  cd ""
+  tar -xzf "-.tar.gz"
+  cd "/-"
+
+  local _target="-pc-windows-gnu"
+  # https://github.com/msys2/MINGW-packages/pull/17827#issuecomment-1646226014
+  # if [[ mingw-w64-clang-x86_64 == *-clang-aarch64 ]]; then
+    # _target="-pc-windows-gnullvm"
+  # fi
+  cargo fetch --locked --target ""
+}
+
+build() {
+  cd "/-"
+
+  WINAPI_NO_BUNDLED_LIBRARIES=1     "C:/msys64/clang64/bin/cargo.exe" build     --release     --locked
+}
+
+check() {
+  cd "/-"
+
+  WINAPI_NO_BUNDLED_LIBRARIES=1   "C:/msys64/clang64/bin/cargo.exe" test     --release     --locked
+}
+
+package() {
+  cd "/-"
+
+  install -Dm755 "target/release/.exe" "C:/msys64/clang64/bin/.exe"
+}
+
+_realname=alacritty
+pkgbase=mingw-w64-
+pkgname="mingw-w64-clang-x86_64-"
+pkgver=0.13.0
+pkgrel=1
+pkgdesc="A cross-platform, OpenGL terminal emulator (mingw-w64)"
+arch=('any')
+mingw_arch=('mingw64' 'ucrt64' 'clang64' 'clangarm64')
+url="https://alacritty.org"
+msys2_repository_url="https://github.com/alacritty/alacritty"
+license=('spdx:Apache-2.0 OR MIT')
+makedepends=("mingw-w64-clang-x86_64-rust"
+             "mingw-w64-clang-x86_64-cmake"
+             "mingw-w64-clang-x86_64-ncurses"
+             "mingw-w64-clang-x86_64-desktop-file-utils"
+             'git')
+depends=("mingw-w64-clang-x86_64-freetype"
+         "mingw-w64-clang-x86_64-fontconfig")
+checkdepends=("mingw-w64-clang-x86_64-ttf-dejavu")
+optdepends=("mingw-w64-clang-x86_64-ncurses: for alacritty terminfo database")
+source=("https://github.com/alacritty/alacritty/archive/v/-.tar.gz")
+validpgpkeys=('4DAA67A9EA8B91FCC15B699C85CDAE3C164BA7B4'  # Christian Dürr <contact@christianduerr.com>
+              'A56EF308A9F1256C25ACA3807EA8F8B94622A6A9') # Kirill Chibisov <contact@kchibisov.com>
+sha256sums=('7825639d971e561b2ea3cc41e30b57cde8e185a400fee001843bb634df6b28ab')
+noextract=("-.tar.gz")
+
+prepare() {
+  cd ""
+  tar -xzf "-.tar.gz"
+  cd "/-"
+
+  local _target="-pc-windows-gnu"
+  # https://github.com/msys2/MINGW-packages/pull/17827#issuecomment-1646226014
+  # if [[ mingw-w64-clang-x86_64 == *-clang-aarch64 ]]; then
+    # _target="-pc-windows-gnullvm"
+  # fi
+  cargo fetch --locked --target ""
+}
+
+build() {
+  cd "/-"
+
+  WINAPI_NO_BUNDLED_LIBRARIES=1     "C:/msys64/clang64/bin/cargo.exe" build     --release     --locked
+}
+
+check() {
+  cd "/-"
+
+  WINAPI_NO_BUNDLED_LIBRARIES=1   "C:/msys64/clang64/bin/cargo.exe" test     --release     --locked
+}
+
+package() {
+  cd "/-"
+
+  install -Dm755 "target/release/.exe" "C:/msys64/clang64/bin/.exe"
+}
+
+_realname=alacritty
+pkgbase=mingw-w64-
+pkgname="mingw-w64-clang-x86_64-"
+pkgver=0.13.0
+pkgrel=1
+pkgdesc="A cross-platform, OpenGL terminal emulator (mingw-w64)"
+arch=('any')
+mingw_arch=('mingw64' 'ucrt64' 'clang64' 'clangarm64')
+url="https://alacritty.org"
+msys2_repository_url="https://github.com/alacritty/alacritty"
+license=('spdx:Apache-2.0 OR MIT')
+makedepends=("mingw-w64-clang-x86_64-rust"
+             "mingw-w64-clang-x86_64-cmake"
+             "mingw-w64-clang-x86_64-ncurses"
+             "mingw-w64-clang-x86_64-desktop-file-utils"
+             'git')
+depends=("mingw-w64-clang-x86_64-freetype"
+         "mingw-w64-clang-x86_64-fontconfig")
+checkdepends=("mingw-w64-clang-x86_64-ttf-dejavu")
+optdepends=("mingw-w64-clang-x86_64-ncurses: for alacritty terminfo database")
+source=("https://github.com/alacritty/alacritty/archive/v/-.tar.gz")
+validpgpkeys=('4DAA67A9EA8B91FCC15B699C85CDAE3C164BA7B4'  # Christian Dürr <contact@christianduerr.com>
+              'A56EF308A9F1256C25ACA3807EA8F8B94622A6A9') # Kirill Chibisov <contact@kchibisov.com>
+sha256sums=('7825639d971e561b2ea3cc41e30b57cde8e185a400fee001843bb634df6b28ab')
+noextract=("-.tar.gz")
+
+prepare() {
+  cd ""
+  tar -xzf "-.tar.gz"
+  cd "/-"
+
+  local _target="-pc-windows-gnu"
+  # https://github.com/msys2/MINGW-packages/pull/17827#issuecomment-1646226014
+  # if [[ mingw-w64-clang-x86_64 == *-clang-aarch64 ]]; then
+    # _target="-pc-windows-gnullvm"
+  # fi
+  cargo fetch --locked --target ""
+}
+
+build() {
+  cd "/-"
+
+  WINAPI_NO_BUNDLED_LIBRARIES=1     "C:/msys64/clang64/bin/cargo.exe" build     --release     --locked
+}
+
+check() {
+  cd "/-"
+
+  WINAPI_NO_BUNDLED_LIBRARIES=1   "C:/msys64/clang64/bin/cargo.exe" test     --release     --locked
+}
+
+package() {
+  cd "/-"
+
+  install -Dm755 "target/release/.exe" "C:/msys64/clang64/bin/.exe"
 }

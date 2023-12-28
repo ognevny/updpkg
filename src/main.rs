@@ -10,10 +10,6 @@ struct Args {
     #[clap(short = 'V', long)]
     version: Option<String>,
 
-    /// make all possible things verbosely
-    #[clap(short, long)]
-    verbose: bool,
-
     /// set directory where recipe is contained (otherwise it's set as `pwd`)
     #[clap(short, long)]
     directory: Option<PathBuf>,
@@ -39,19 +35,14 @@ fn main() {
     env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info")).init();
 
     let args = Args::parse();
-    let (version, verbose, directory, make, make_mingw, flags, git) = (
+    let (version, directory, make, make_mingw, flags, git) = (
         args.version,
-        args.verbose,
         args.directory,
         args.make,
         args.make_mingw,
         args.flags,
         args.git,
     );
-
-    if verbose {
-        env::set_var("VERBOSE", "1");
-    }
 
     if let Some(dir) = directory {
         info!("changing directory to {}", dir.to_string_lossy());
@@ -63,7 +54,12 @@ fn main() {
             info!("setting pkgver as {ver}, setting pkgrel as 1");
             // assuming sed doesn't fail
             Command::new("sed")
-                .args(["-i", "-e", &format!("s|^pkgver=.*|pkgver={ver}|; s|^pkgrel=.*|pkgrel=1|")])
+                .args([
+                    "-i",
+                    "-e",
+                    &format!("s|^pkgver=.*|pkgver={ver}|; s|^pkgrel=.*|pkgrel=1|"),
+                    "PKGBUILD",
+                ])
                 .status()
                 .unwrap();
         }
@@ -71,33 +67,36 @@ fn main() {
     } else if git {
         if let Some(ver) = version {
             info!("setting commit as {ver}, setting pkgrel as 1");
-            Command::new("sed")
+            match Command::new("/usr/bin/sed")
                 .args([
                     "-i",
                     "-e",
                     &format!("s|^_commit=.*|_commit={ver}|; s|^pkgrel=.*|pkgrel=1|"),
+                    "PKGBUILD",
                 ])
-                .status()
-                .unwrap();
+                .status() {
+                    Ok(_) => (),
+                    Err(e) => error!("couldn't sed PKGBUILD: {e}"),
+                }
         }
     }
 
-    match Command::new("updpkgsums").status() {
+    match Command::new("/usr/bin/updpkgsums").status() {
         Ok(_) => (),
-        Err(e) => error!("couldn't update checksums: {e}, see message above"),
+        Err(e) => error!("couldn't update checksums: {e}"),
     }
 
     if make && make_mingw {
         error!("can't invoke both `makepkg` and `makepkg-mingw`");
     } else if make {
-        match Command::new("makepkg").arg(&flags).status() {
+        match Command::new("/usr/bin/makepkg").arg(&flags).status() {
             Ok(_) => (),
-            Err(e) => error!("couldn't make package: {e}, see message above"),
+            Err(e) => error!("couldn't make package: {e}"),
         }
     } else if make_mingw {
-        match Command::new("makepkg-mingw").arg(&flags).status() {
+        match Command::new("/usr/bin/makepkg-mingw").arg(&flags).status() {
             Ok(_) => (),
-            Err(e) => error!("couldn't make package: {e}, see message above"),
+            Err(e) => error!("couldn't make package: {e}"),
         }
     }
 }
