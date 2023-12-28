@@ -29,6 +29,7 @@ jobs:
             desktop-file-utils:p
             freetype:p
             fontconfig:p
+            ttf-dejavu:p
             git
       - name: build
         run: msys2 -c 'cargo b -v --locked'
