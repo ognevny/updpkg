@@ -68,5 +68,5 @@ package() {
 }
 END
 
-target/debug/updpkg --verbose --directory testing --version '0.13.0' --make-mingw --flags '-c' ||
-target/release/updpkg --verbose --directory testing --version '0.13.0' --make-mingw --flags '-c'
+./target/debug/updpkg --verbose --directory testing --version '0.13.0' --make-mingw --flags '-c' ||
+./target/release/updpkg --verbose --directory testing --version '0.13.0' --make-mingw --flags '-c'
