@@ -10,7 +10,7 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  build_and_test:
+  build_from_tarball:
     name: full check
     runs-on: windows-latest
     strategy:
