@@ -5,15 +5,14 @@ mkdir -p testing && touch testing/PKGBUILD
 cat >> testing/PKGBUILD <<END
 
 _realname=alacritty
-pkgbase=mingw-w64-${_realname}
+pkgbase=mingw-w64-\${_realname}
 pkgname="\${MINGW_PACKAGE_PREFIX}-\${_realname}"
 pkgver=0.12.3
 pkgrel=3
 pkgdesc="A cross-platform, OpenGL terminal emulator (mingw-w64)"
 arch=('any')
-mingw_arch=('mingw64' 'ucrt64' 'clang64' 'clangarm64')
+mingw_arch=('ucrt64')
 url="https://alacritty.org"
-msys2_repository_url="https://github.com/alacritty/alacritty"
 license=('spdx:Apache-2.0 OR MIT')
 makedepends=("\${MINGW_PACKAGE_PREFIX}-rust"
              "\${MINGW_PACKAGE_PREFIX}-cmake"
@@ -25,8 +24,8 @@ depends=("\${MINGW_PACKAGE_PREFIX}-freetype"
 checkdepends=("\${MINGW_PACKAGE_PREFIX}-ttf-dejavu")
 optdepends=("\${MINGW_PACKAGE_PREFIX}-ncurses: for alacritty terminfo database")
 source=("https://github.com/alacritty/alacritty/archive/refs/tags/v\${pkgver}/\${_realname}-\${pkgver}.tar.gz")
-validpgpkeys=('4DAA67A9EA8B91FCC15B699C85CDAE3C164BA7B4'  # Christian Dürr <contact@christianduerr.com>
-              'A56EF308A9F1256C25ACA3807EA8F8B94622A6A9') # Kirill Chibisov <contact@kchibisov.com>
+validpgpkeys=('4DAA67A9EA8B91FCC15B699C85CDAE3C164BA7B4'
+              'A56EF308A9F1256C25ACA3807EA8F8B94622A6A9')
 sha256sums=('7825639d971e561b2ea3cc41e30b57cde8e185a400fee001843bb634df6b28ab')
 noextract=("\${_realname}-\${pkgver}.tar.gz")
 
@@ -35,12 +34,7 @@ prepare() {
   tar -xzf "\${_realname}-\${pkgver}.tar.gz"
   cd "\${srcdir}/\${_realname}-\${pkgver}"
 
-  local _target="\${CARCH}-pc-windows-gnu"
-  if [[ \$MINGW_PACKAGE_PREFIX == *-clang-aarch64 ]]; then
-    _target="\${CARCH}-pc-windows-gnullvm"
-  fi
-
-  cargo fetch --locked --target "\${_target}"
+  cargo fetch --locked --target x86_64-pc-windows-gnu
 }
 
 build() {
@@ -60,7 +54,7 @@ check() {
 package() {
   cd "\${srcdir}/\${_realname}-\${pkgver}"
 
-  install -Dm755 "target/release/\${_realname}.exe" "\${pkgdir}\${MINGW_PREFIX}/bin/\${_realname}.exe"
+  install -Dm755 "target/release/\${_realname}.exe" "\${pkgdir}/ucrt64/bin/\${_realname}.exe"
 }
 END
 
