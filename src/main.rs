@@ -53,7 +53,7 @@ fn main() {
         if let Some(ver) = version {
             info!("setting pkgver as {ver}, setting pkgrel as 1");
             // assuming sed doesn't fail
-            match Command::new("/usr/bin/sed")
+            match Command::new("sed")
                 .args([
                     "-i",
                     "-e",
@@ -69,7 +69,7 @@ fn main() {
     } else if git {
         if let Some(ver) = version {
             info!("setting commit as {ver}, setting pkgrel as 1");
-            match Command::new("/usr/bin/sed")
+            match Command::new("sed")
                 .args([
                     "-i",
                     "-e",
@@ -83,7 +83,7 @@ fn main() {
         }
     }
 
-    match Command::new("/usr/bin/updpkgsums").status() {
+    match Command::new("updpkgsums").status() {
         Ok(_) => (),
         Err(e) => error!("couldn't update checksums: {e}"),
     }
@@ -91,12 +91,12 @@ fn main() {
     if make && make_mingw {
         error!("can't invoke both `makepkg` and `makepkg-mingw`");
     } else if make {
-        match Command::new("/usr/bin/makepkg").arg(&flags).status() {
+        match Command::new("makepkg").arg(&flags).status() {
             Ok(_) => (),
             Err(e) => error!("couldn't make package: {e}"),
         }
     } else if make_mingw {
-        match Command::new("/usr/bin/makepkg-mingw").arg(&flags).status() {
+        match Command::new("makepkg-mingw").arg(&flags).status() {
             Ok(_) => (),
             Err(e) => error!("couldn't make package: {e}"),
         }
