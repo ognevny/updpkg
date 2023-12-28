@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    paths: ['**.rs', '**.toml', '**.lock', '**.yml', '**.sh']
+  pull_request:
+    paths: ['**.rs', '**.toml', '**.lock', '**.yml', '**.sh']
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build_and_test:
+    name: full check
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v4
+      - name: setup msys2
+        uses: msys2/setup-msys2@v2
+        with:
+          update: true
+          msystem: UCRT64
+          pacboy: >-
+            rust:p
+            cmake:p
+            ncurses:p
+            desktop-file-utils:p
+            freetype:p
+            fontconfig:p
+            git
+      - name: build
+        run: cargo b -v --locked
+      - name: fmt and clippy check
+        if: ${{ matrix.toolchain == 'nightly' }}
+        run: cargo fmt -- --check ; cargo clippy --locked -- -D warnings
+      - name: test
+        run: cargo t --locked --test '*'
