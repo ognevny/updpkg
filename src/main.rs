@@ -65,6 +65,8 @@ fn get_makepkg(msys2: bool, msys2_mingw: bool, ci: bool) -> PathBuf {
 fn main() {
     env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info")).init();
 
+    println!("{PATH: {:?}", env::var("PATH").unwrap());
+
     let args = Args::parse();
     let (version, directory, make, mut msys2, msys2_mingw, flags, git, ci) = (
         args.version,
