@@ -92,11 +92,13 @@ fn main() {
     if make && make_mingw {
         error!("can't invoke both `makepkg` and `makepkg-mingw`");
     } else if make {
+        info!("using `makepkg` with flags {flags}");
         match Command::new("bash").arg("makepkg").arg(&flags).status() {
             Ok(_) => (),
             Err(e) => error!("couldn't make package: {e}"),
         }
     } else if make_mingw {
+        info!("using `makepkg-mingw` with flags {flags}");
         match Command::new("bash").arg("makepkg-mingw").arg(&flags).status() {
             Ok(_) => (),
             Err(e) => error!("couldn't make package: {e}"),
