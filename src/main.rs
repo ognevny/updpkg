@@ -1,6 +1,6 @@
 use {
     clap::Parser,
-    log::{error, info},
+    log::{error, info, warn},
     std::{env, path::PathBuf, process::Command},
 };
 
@@ -80,6 +80,9 @@ fn main() {
                     Ok(_) => (),
                     Err(e) => error!("couldn't sed PKGBUILD: {e}"),
                 }
+            if !make && !make_mingw {
+                warn!("you may need to run `makepkg` manually to update `pkgver`");
+            }
         }
     }
 
