@@ -32,9 +32,11 @@ jobs:
             ttf-dejavu:p
             git
       - name: build
-        run: msys2 -c 'cargo b -v --locked'
-      - name: fmt and clippy check
-        run: msys2 -c 'cargo clippy --locked -- -D warnings'
+        shell: msys2 {0}
+        run: cargo b -v --locked
+      - name: clippy check
+        shell: msys2 {0}
+        run: cargo clippy --locked -- -D warnings
       - name: test
         shell: msys2 {0}
         run: cargo t --locked --test '*'
