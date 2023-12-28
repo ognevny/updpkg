@@ -66,3 +66,5 @@ END
 
 ./target/debug/updpkg --directory testing --version '0.13.0' --make-mingw --flags='-c' ||
 ./target/release/updpkg --directory testing --version '0.13.0' --make-mingw --flags='-c'
+
+rm -rf testing
