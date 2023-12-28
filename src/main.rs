@@ -10,10 +10,6 @@ struct Args {
     #[clap(short = 'V', long)]
     version: Option<String>,
 
-    /// make all possible things verbosely
-    #[clap(short, long)]
-    verbose: bool,
-
     /// set directory where recipe is contained (otherwise it's set as `pwd`)
     #[clap(short, long)]
     directory: Option<PathBuf>,
@@ -22,9 +18,13 @@ struct Args {
     #[clap(short, long)]
     make: bool,
 
-    /// invoke `makepkg-mingw`
-    #[clap(short = 'M', long = "make-mingw")]
-    make_mingw: bool,
+    /// set if you use msys2 suite
+    #[clap(short = 'M', long)]
+    msys2: bool,
+
+    /// set if you use msys2 mingw suite (automaticly sets `msys2` as `true`)
+    #[clap(long = "msys2-mingw")]
+    msys2_mingw: bool,
 
     /// set flags for `makepkg` (like you invoke it manually)
     #[clap(short, long, default_value = "")]
@@ -33,24 +33,52 @@ struct Args {
     /// set if package source is downloaded from git
     #[clap(long)]
     git: bool,
+
+    /// ugly fix for PATH issue
+    #[clap(long)]
+    ci: bool,
+}
+
+fn get_updpkgsums(msys2: bool, ci: bool) -> PathBuf {
+    // hardcode as not everyone set /usr/bin from msys2 in PATH
+    if msys2 {
+        PathBuf::from(r"C:\msys64\usr\bin\updpkgsums")
+    } else if ci {
+        PathBuf::from(r"D:\M\msys64\usr\bin\updpkgsums")
+    } else {
+        PathBuf::from("/usr/bin/makepkg")
+    }
+}
+
+fn get_makepkg(msys2: bool, msys2_mingw: bool, ci: bool) -> PathBuf {
+    if msys2_mingw {
+        PathBuf::from(r"C:\msys64\usr\bin\makepkg-mingw")
+    } else if msys2 {
+        PathBuf::from(r"C:\msys64\usr\bin\makepkg")
+    } else if ci {
+        PathBuf::from(r"D:\M\msys64\usr\bin\makepkg-mingw")
+    } else {
+        PathBuf::from("/usr/bin/makepkg")
+    }
 }
 
 fn main() {
     env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info")).init();
 
     let args = Args::parse();
-    let (version, verbose, directory, make, make_mingw, flags, git) = (
+    let (version, directory, make, mut msys2, msys2_mingw, flags, git, ci) = (
         args.version,
-        args.verbose,
         args.directory,
         args.make,
-        args.make_mingw,
+        args.msys2,
+        args.msys2_mingw,
         args.flags,
         args.git,
+        args.ci,
     );
 
-    if verbose {
-        env::set_var("VERBOSE", "1");
+    if msys2_mingw {
+        msys2 = true
     }
 
     if let Some(dir) = directory {
@@ -63,7 +91,12 @@ fn main() {
             info!("setting pkgver as {ver}, setting pkgrel as 1");
             // assuming sed doesn't fail
             Command::new("sed")
-                .args(["-i", "-e", &format!("s|^pkgver=.*|pkgver={ver}|; s|^pkgrel=.*|pkgrel=1|")])
+                .args([
+                    "-i",
+                    "-e",
+                    &format!("s|^pkgver=.*|pkgver={ver}|; s|^pkgrel=.*|pkgrel=1|"),
+                    "PKGBUILD",
+                ])
                 .status()
                 .unwrap();
         }
@@ -76,28 +109,33 @@ fn main() {
                     "-i",
                     "-e",
                     &format!("s|^_commit=.*|_commit={ver}|; s|^pkgrel=.*|pkgrel=1|"),
+                    "PKGBUILD",
                 ])
                 .status()
                 .unwrap();
         }
     }
 
-    match Command::new("updpkgsums").status() {
+    match Command::new(get_updpkgsums(msys2, ci)).status() {
         Ok(_) => (),
-        Err(e) => error!("couldn't update checksums: {e}, see message above"),
+        Err(e) => error!("couldn't update checksums: {e}"),
     }
 
-    if make && make_mingw {
-        error!("can't invoke both `makepkg` and `makepkg-mingw`");
-    } else if make {
-        match Command::new("makepkg").arg(&flags).status() {
+    if make && !msys2 {
+        match Command::new(get_makepkg(msys2, msys2_mingw, ci))
+            .arg(&flags)
+            .status()
+        {
             Ok(_) => (),
-            Err(e) => error!("couldn't make package: {e}, see message above"),
+            Err(e) => error!("couldn't make package: {e}"),
         }
-    } else if make_mingw {
-        match Command::new("makepkg-mingw").arg(&flags).status() {
+    } else if make && msys2 {
+        match Command::new(get_makepkg(msys2, msys2_mingw, ci))
+            .arg(&flags)
+            .status()
+        {
             Ok(_) => (),
-            Err(e) => error!("couldn't make package: {e}, see message above"),
+            Err(e) => error!("couldn't make package: {e}"),
         }
     }
 }

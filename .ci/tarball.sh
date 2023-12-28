@@ -1,8 +1,8 @@
 #!/bin/sh
 
-mkdir -p testing && touch testing/PKGBUILD
+mkdir -p testing && cd testing && touch PKGBUILD
 
-cat >> testing/PKGBUILD <<END
+cat >> PKGBUILD <<END
 
 _realname=alacritty
 pkgbase=mingw-w64-${_realname}
@@ -68,5 +68,5 @@ package() {
 }
 END
 
-./target/debug/updpkg --verbose --directory testing --version '0.13.0' --make-mingw --flags '-c' ||
-./target/release/updpkg --verbose --directory testing --version '0.13.0' --make-mingw --flags '-c'
+../target/debug/updpkg --version '0.13.0' --make --msys2-mingw --ci --flags='-c' ||
+../target/release/updpkg --version '0.13.0' --make --msys2-mingw --ci --flags='-c'
