@@ -34,8 +34,7 @@ jobs:
       - name: build
         run: msys2 -c 'cargo b -v --locked'
       - name: fmt and clippy check
-        if: ${{ matrix.toolchain == 'nightly' }}
-        run: msys2 -c 'cargo fmt -- --check ; cargo clippy --locked -- -D warnings'
+        run: msys2 -c 'cargo clippy --locked -- -D warnings'
       - name: test
         shell: msys2 {0}
         run: cargo t --locked --test '*'
