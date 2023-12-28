@@ -83,7 +83,8 @@ fn main() {
         }
     }
 
-    match Command::new("updpkgsums").status() {
+    info!("updating checksums");
+    match Command::new("bash").arg("updpkgsums").status() {
         Ok(_) => (),
         Err(e) => error!("couldn't update checksums: {e}"),
     }
@@ -91,12 +92,12 @@ fn main() {
     if make && make_mingw {
         error!("can't invoke both `makepkg` and `makepkg-mingw`");
     } else if make {
-        match Command::new("makepkg").arg(&flags).status() {
+        match Command::new("bash").arg("makepkg").arg(&flags).status() {
             Ok(_) => (),
             Err(e) => error!("couldn't make package: {e}"),
         }
     } else if make_mingw {
-        match Command::new("makepkg-mingw").arg(&flags).status() {
+        match Command::new("bash").arg("makepkg-mingw").arg(&flags).status() {
             Ok(_) => (),
             Err(e) => error!("couldn't make package: {e}"),
         }
