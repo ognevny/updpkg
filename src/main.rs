@@ -49,19 +49,22 @@ fn main() {
         env::set_current_dir(dir).unwrap_or_else(|e| error!("couldn't change directory: {e}"));
     }
 
-    if !git && if let Some(ver) = version {
-        info!("setting pkgver as {ver}, setting pkgrel as 1");
-        match Command::new("sed")
-            .args([
-                "-i",
-                "-e",
-                &format!("s|^pkgver=.*|pkgver={ver}|; s|^pkgrel=.*|pkgrel=1|"),
-                "PKGBUILD",
-            ])
-            .status() {
+    if !git {
+        if let Some(ver) = version {
+            info!("setting pkgver as {ver}, setting pkgrel as 1");
+            match Command::new("sed")
+                .args([
+                    "-i",
+                    "-e",
+                    &format!("s|^pkgver=.*|pkgver={ver}|; s|^pkgrel=.*|pkgrel=1|"),
+                    "PKGBUILD",
+                ])
+                .status()
+            {
                 Ok(_) => (),
                 Err(e) => error!("couldn't sed PKGBUILD: {e}"),
             }
+        }
     } else if let Some(ver) = version {
         info!("setting commit as {ver}, setting pkgrel as 1");
         match Command::new("sed")
@@ -71,10 +74,11 @@ fn main() {
                 &format!("s|^_commit=.*|_commit={ver}|; s|^pkgrel=.*|pkgrel=1|"),
                 "PKGBUILD",
             ])
-            .status() {
-                Ok(_) => (),
-                Err(e) => error!("couldn't sed PKGBUILD: {e}"),
-            }
+            .status()
+        {
+            Ok(_) => (),
+            Err(e) => error!("couldn't sed PKGBUILD: {e}"),
+        }
         if !make && !make_mingw {
             warn!("you may need to run `makepkg` manually to update `pkgver`");
         }
