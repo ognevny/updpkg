@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    paths: ['**.rs', '**.toml', '**.lock', '**.yml', '**.sh']
+    paths: ['**.rs', '**.toml', '**.lock', 'ci.yml', '**.sh']
   pull_request:
-    paths: ['**.rs', '**.toml', '**.lock', '**.yml', '**.sh']
+    paths: ['**.rs', '**.toml', '**.lock', 'ci.yml', '**.sh']
 
 env:
   CARGO_TERM_COLOR: always
@@ -37,11 +37,8 @@ jobs:
           rustup toolchain link msys2 D:\M\msys64\ucrt64
           rustup default msys2
       - name: build
-        shell: msys2 {0}
-        run: cargo b -v --locked
+        run: msys2 -c 'cargo b -v --locked'
       - name: clippy check
-        shell: msys2 {0}
-        run: cargo clippy --locked -- -D warnings
+        run: msys2 -c cargo 'clippy --locked -- -D warnings'
       - name: test
-        shell: msys2 {0}
-        run: cargo t --locked --test '*'
+        run: msys2 -c './.ci/tarball.sh'
