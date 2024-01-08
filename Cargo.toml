@@ -15,3 +15,12 @@ rust-version = "1.70.0"
 clap = { version = "4", features = ["derive"] }
 log = "0"
 env_logger = "0"
+
+[profile.release]
+strip = true
+lto = true
+codegen-units = 1
+
+[[bin]]
+name = "updpkg"
+path = "src/main.rs"
