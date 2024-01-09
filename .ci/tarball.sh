@@ -1,6 +1,6 @@
 #!/bin/sh
 
-mkdir -p testing && touch testing/PKGBUILD
+mkdir -p testing && touch testing/PKGBUILD testing/dummy.patch
 
 cat >> testing/PKGBUILD <<END
 
@@ -21,6 +21,7 @@ makedepends=("mingw-w64-ucrt-x86_64-rust"
 depends=("mingw-w64-ucrt-x86_64-freetype" "mingw-w64-ucrt-x86_64-fontconfig")
 checkdepends=("mingw-w64-ucrt-x86_64-ttf-dejavu")
 source=("https://github.com/alacritty/alacritty/archive/v\${pkgver}/alacritty-\${pkgver}.tar.gz")
+        # "dummy.patch")
 validpgpkeys=('4DAA67A9EA8B91FCC15B699C85CDAE3C164BA7B4'
               'A56EF308A9F1256C25ACA3807EA8F8B94622A6A9')
 sha256sums=('dummy')
@@ -32,6 +33,8 @@ prepare() {
   cd "\${srcdir}/alacritty-\${pkgver}"
 
   cargo fetch --locked --target x86_64-pc-windows-gnu
+
+  # patch -Np1 -i "\${srcdir}/dummy.patch"
 }
 
 build() {
@@ -53,6 +56,11 @@ package() {
 
   install -Dm755 "target/release/alacritty.exe" "\${pkgdir}/ucrt64/bin/alacritty.exe"
 }
+END
+
+cat >> testing/dummy.patch <<END
+
+dummy
 END
 
 cp testing/PKGBUILD testing/PKGBUILD.bak
