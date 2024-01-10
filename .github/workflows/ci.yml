@@ -17,8 +17,7 @@ jobs:
       fail-fast: false
     steps:
       - uses: actions/checkout@v4
-      - name: setup msys2
-        uses: msys2/setup-msys2@v2
+      - uses: msys2/setup-msys2@v2
         with:
           update: true
           msystem: UCRT64
@@ -39,6 +38,6 @@ jobs:
       - name: build
         run: msys2 -c 'cargo b -v --locked'
       - name: clippy check
-        run: msys2 -c cargo 'clippy --locked -- -D warnings'
+        run: msys2 -c 'cargo clippy --locked -- -D warnings'
       - name: test
         run: msys2 -c './.ci/tarball.sh'
