@@ -43,7 +43,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: update to nightly rust
-        run: rustup update nightly && rustup default nightly
+        run: |
+          rustup update nightly
+          rustup default nightly
+          rustup component add rustfmt clippy
       - name: build
         run: cargo b -v --locked
       - name: fmt and clippy check
