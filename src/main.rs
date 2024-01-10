@@ -1,7 +1,7 @@
 use {
     clap::Parser,
     log::{error, info, warn},
-    std::{env, path::PathBuf, process::Command},
+    std::{env, fs, path::PathBuf, process::Command},
 };
 
 #[derive(Debug, Parser)]
@@ -27,42 +27,48 @@ struct Args {
     #[clap(long, value_name = "SHA")]
     git: Option<String>,
 
-    // /// removes files from directory and recipe
-    // #[clap(short, long, value_name = "FILES", num_args = 1..)]
-    // rm: Option<Vec<String>>,
+    /// removes files from directory and recipe
+    #[clap(short, long, value_name = "FILES", num_args = 1..)]
+    rm: Option<Vec<String>>,
 }
 
 fn main() {
     env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info")).init();
 
     let args = Args::parse();
-    let (ver, dir, make, make_mingw, git) = ( //, rm) = (
+    let (ver, dir, make, make_mingw, git, rm) = (
         args.ver,
         args.directory,
         args.make,
         args.make_mingw,
         args.git,
-        // args.rm,
+        args.rm,
     );
 
     info!("changing directory to {}", dir.to_string_lossy());
     env::set_current_dir(dir).unwrap_or_else(|e| error!("couldn't change directory: {e}"));
 
-    // if let Some(files) = rm {
-    //     for file in files.iter() {
-    //         info!("removing {file} from recipe");
-    //         let replaced = file.replace(".", "\\.");
-    //         match Command::new("sed")
-    //             .args(["-i", "-e", &format!("s|^.*{replaced}\"?\\s*||g"), "PKGBUILD"])
-    //             .status()
-    //         {
-    //             Ok(_) => (),
-    //             Err(e) => error!("couldn't remove {file} from recipe: {e}"),
-    //         }
-    //         info!("removing {file} from directory");
-    //         fs::remove_file(file).unwrap_or_else(|e| error!("couldn't remove file: {e}"));
-    //     }
-    // }
+    if let Some(files) = rm {
+        for file in files.iter() {
+            info!("removing {file} from recipe");
+            let replaced = file.replace('.', "\\.");
+            match Command::new("sed")
+                .args([
+                    "-i",
+                    "-e",
+                    // don't know how to optimize it
+                    &format!("s|^.*{replaced}\\s*||g; s|^\")|)|g; s|^\"$||g"),
+                    "PKGBUILD",
+                ])
+                .status()
+            {
+                Ok(_) => (),
+                Err(e) => error!("couldn't remove {file} from recipe: {e}"),
+            }
+            info!("removing {file} from directory");
+            fs::remove_file(file).unwrap_or_else(|e| error!("couldn't remove file: {e}"));
+        }
+    }
 
     if let Some(ver) = ver {
         info!("setting pkgver as {ver}, setting pkgrel as 1");
