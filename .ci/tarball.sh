@@ -1,7 +1,5 @@
 #!/bin/sh
 
-set -e
-
 mkdir -p testing && touch testing/PKGBUILD testing/dummy.patch
 
 cat >> testing/PKGBUILD <<END
