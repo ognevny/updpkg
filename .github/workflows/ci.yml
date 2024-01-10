@@ -32,10 +32,6 @@ jobs:
             ttf-dejavu:p
             diffutils:p
             git
-      - name: hack rustup
-        run: |
-          rustup toolchain link msys2 D:\M\msys64\ucrt64
-          rustup default msys2
       - name: build
         run: msys2 -c 'cargo b -v --locked'
       - name: test
