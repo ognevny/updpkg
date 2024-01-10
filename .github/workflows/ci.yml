@@ -31,7 +31,6 @@ jobs:
             fontconfig:p
             ttf-dejavu:p
             diffutils:p
-            git
       - name: build
         run: msys2 -c 'cargo b -v --locked'
       - name: test
