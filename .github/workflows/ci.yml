@@ -30,6 +30,7 @@ jobs:
             freetype:p
             fontconfig:p
             ttf-dejavu:p
+            diffutils:p
             git
       - name: hack rustup
         run: |
