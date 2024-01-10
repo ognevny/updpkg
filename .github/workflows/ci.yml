@@ -10,8 +10,8 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  build_from_tarball:
-    name: full check
+  tarball_msys:
+    name: build from tarball (MSYS2)
     runs-on: windows-latest
     strategy:
       fail-fast: false
@@ -37,7 +37,18 @@ jobs:
           rustup default msys2
       - name: build
         run: msys2 -c 'cargo b -v --locked'
-      - name: clippy check
-        run: msys2 -c 'cargo clippy --locked -- -D warnings'
       - name: test
         run: msys2 -c './.ci/tarball.sh'
+  lint_ubuntu:
+    name: code check
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v4
+      - name: update to nightly rust
+        run: rustup update nightly && rustup default nightly
+      - name: build
+        run: cargo b -v --locked
+      - name: fmt and clippy check
+        run: cargo fmt -- --check; cargo clippy -- -D warnings
