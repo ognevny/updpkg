@@ -82,6 +82,7 @@ fn main() {
             Err(e) => error!("couldn't change `pkgver` and/or `pkgrel`: {e}"),
         }
     }
+
     if let Some(ver_git) = git {
         info!("setting commit as {ver_git}, setting pkgrel as 1");
         match sed(&format!(
@@ -94,6 +95,7 @@ fn main() {
             warn!("you may need to run `makepkg` manually to update `pkgver`");
         }
     }
+
     info!("updating checksums");
     // Windows doesn't support sh executables
     if cfg!(windows) {
