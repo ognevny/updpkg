@@ -1,13 +1,16 @@
 [package]
 name = "updpkg"
-version = "0.0.0"
+version = "0.1.0"
 edition = "2021"
 license = "WTFPL"
-description = "A small CLI to update PKGBUILD recipes"
+description = "A small tool for updating PKGBUILD recipes"
 authors = ["Maksim Bondarenkov <maksapple2306@gmail.com>"]
-repository = "https://github.com/ognevnydemon/updpkg"
+repository = "https://github.com/ognevny/updpkg"
 readme = "README.md"
 rust-version = "1.70.0"
+categories = ["command-line-utilities"]
+keywords = ["CLI"]
+exclude = ["/.ci", "/.github"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

@@ -11,10 +11,10 @@ use {
 };
 
 #[derive(Debug, Parser)]
-#[clap(about, version, author, long_about = None)]
+#[clap(about, version, long_about = None)]
 struct Args {
     /// path to directory with PKGBUILD
-    #[clap(required = true)]
+    #[clap(default_value = ".")]
     directory: PathBuf,
 
     /// new version of package (tarball)
@@ -57,8 +57,10 @@ fn main() {
         args.rm,
     );
 
-    info!("changing directory to {}", dir.to_string_lossy());
-    env::set_current_dir(dir).unwrap_or_else(|e| error!("couldn't change directory: {e}"));
+    if dir != PathBuf::from(".") {
+        info!("changing directory to {}", dir.to_string_lossy());
+        env::set_current_dir(dir).unwrap_or_else(|e| error!("couldn't change directory: {e}"));
+    }
 
     if let Some(files) = rm {
         for file in files.iter() {
