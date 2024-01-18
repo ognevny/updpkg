@@ -36,12 +36,19 @@ struct Args {
     /// removes files from directory and recipe
     #[clap(short, long, value_name = "FILES", num_args = 1..)]
     rm: Option<Vec<String>>,
+
+    /// use sd instead of sed
+    #[clap(long = "use-sd")]
+    use_sd: bool,
 }
 
 fn sed(re: &str) -> Result<ExitStatus, Error> {
-    Command::new("sed")
-        .args(["-i", "-e", &re, "PKGBUILD"])
-        .status()
+    Command::new("sed").args(["-i", re, "PKGBUILD"]).status()
+}
+
+#[cfg(feature = "sd")]
+fn sd(old: &str, new: &str) -> Result<ExitStatus, Error> {
+    Command::new("sd").args([old, new, "PKGBUILD"]).status()
 }
 
 fn main() {
@@ -57,6 +64,9 @@ fn main() {
         args.rm,
     );
 
+    #[cfg(feature = "sd")]
+    let use_sd = args.use_sd;
+
     if dir != PathBuf::from(".") {
         info!("changing directory to {}", dir.to_string_lossy());
         env::set_current_dir(dir).unwrap_or_else(|e| error!("couldn't change directory: {e}"));
@@ -65,10 +75,12 @@ fn main() {
     if let Some(files) = rm {
         for file in files.iter() {
             info!("removing {file} from recipe");
-            let replaced = file.replace('.', "\\.");
-            match sed(&format!(r#"s|^.*{replaced}\s*||g; s|^")|)|g; s|^"$||g"#)) {
-                Ok(_) => (),
-                Err(e) => error!("couldn't remove file from recipe: {e}"),
+            if !use_sd {
+                sed(&format!(r#"s|^.*{file}\s*||g; s|^")|)|g; s|^"$||g"#)).unwrap();
+            } else {
+                sd(&format!(r#"^.*{file}\s*"#), "").unwrap();
+                sd(r#"^")"#, ")").unwrap();
+                sd(r#"^"$"#, "").unwrap();
             }
             info!("removing {file} from directory");
             fs::remove_file(file).unwrap_or_else(|e| warn!("couldn't remove file: {e}"));
@@ -77,21 +89,27 @@ fn main() {
 
     if let Some(ver) = ver {
         info!("setting `pkgver` as {ver}, setting `pkgrel` as 1");
-        match sed(&format!(
-            "s|^pkgver=.*|pkgver={ver}|; s|^pkgrel=.*|pkgrel=1|"
-        )) {
-            Ok(_) => (),
-            Err(e) => error!("couldn't change `pkgver` and/or `pkgrel`: {e}"),
+        if !use_sd {
+            sed(&format!(
+                "s|^pkgver=.*|pkgver={ver}|; s|^pkgrel=.*|pkgrel=1|"
+            ))
+            .unwrap();
+        } else {
+            sd("^pkgver=.*", &format!("pkgver={ver}")).unwrap();
+            sd("^pkgrel=.*", "pkgrel=1").unwrap();
         }
     }
 
-    if let Some(ver_git) = git {
-        info!("setting commit as {ver_git}, setting pkgrel as 1");
-        match sed(&format!(
-            "s|^_commit=.*|_commit={ver_git}|; s|^pkgrel=.*|pkgrel=1|"
-        )) {
-            Ok(_) => (),
-            Err(e) => error!("couldn't change commit SHA: {e}"),
+    if let Some(ver) = git {
+        info!("setting commit as {ver}, setting pkgrel as 1");
+        if !use_sd {
+            sed(&format!(
+                "s|^_commit=.*|_commit={ver}|; s|^pkgrel=.*|pkgrel=1|"
+            ))
+            .unwrap();
+        } else {
+            sd("^_commit=.*", &format!("_commit={ver}")).unwrap();
+            sd("^pkgrel=.*", "pkgrel=1").unwrap();
         }
         if make.is_none() && make_mingw.is_none() {
             warn!("you may need to run `makepkg` manually to update `pkgver`");

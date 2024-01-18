@@ -24,6 +24,10 @@ strip = true
 lto = true
 codegen-units = 1
 
+[features]
+default = ["sd"]
+sd = []
+
 [[bin]]
 name = "updpkg"
 path = "src/main.rs"
