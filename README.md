@@ -18,6 +18,7 @@ Options:
   -M, --make-mingw <FLAGS>  the same as `make`, but for `makepkg-mingw`
       --git <SHA>           specify commit SHA
   -r, --rm <FILES>...       removes files from directory and recipe
+      --use-sd              use sd instead of sed
   -h, --help                Print help
   -V, --version             Print version
 ```
