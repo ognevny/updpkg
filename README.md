@@ -48,3 +48,8 @@ update checksums and commit SHA in recipe for current directory
 ```console
 $ updpkg --git='55932aad9ec31456a0ed8c3488173e8b78113652'
 ```
+
+### sd support
+
+you can use sd (instead of sed) for changing fields. to do so, just pass `--use-sd` option. if you
+don't need ot at all, you can pass `--no-default-features` at build
