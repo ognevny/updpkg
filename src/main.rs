@@ -42,10 +42,12 @@ struct Args {
     use_sd: bool,
 }
 
+#[inline]
 fn sed(re: &str) -> Result<ExitStatus, Error> {
     Command::new("sed").args(["-i", re, "PKGBUILD"]).status()
 }
 
+#[inline]
 #[cfg(feature = "sd")]
 fn sd(old: &str, new: &str) -> Result<ExitStatus, Error> {
     Command::new("sd").args([old, new, "PKGBUILD"]).status()
