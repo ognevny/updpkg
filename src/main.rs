@@ -57,14 +57,8 @@ fn main() {
     Builder::from_env(Env::default().default_filter_or("info")).init();
 
     let args = Args::parse();
-    let (ver, dir, make, make_mingw, git, rm) = (
-        args.ver,
-        args.directory,
-        args.make,
-        args.make_mingw,
-        args.git,
-        args.rm,
-    );
+    let (ver, dir, make, make_mingw, git, rm) =
+        (args.ver, args.directory, args.make, args.make_mingw, args.git, args.rm);
 
     #[cfg(feature = "sd")]
     let use_sd = args.use_sd;
@@ -92,10 +86,7 @@ fn main() {
     if let Some(ver) = ver {
         info!("setting `pkgver` as {ver}, setting `pkgrel` as 1");
         if !use_sd {
-            sed(&format!(
-                "s|^pkgver=.*|pkgver={ver}|; s|^pkgrel=.*|pkgrel=1|"
-            ))
-            .unwrap();
+            sed(&format!("s|^pkgver=.*|pkgver={ver}|; s|^pkgrel=.*|pkgrel=1|")).unwrap();
         } else {
             sd("^pkgver=.*", &format!("pkgver={ver}")).unwrap();
             sd("^pkgrel=.*", "pkgrel=1").unwrap();
@@ -105,10 +96,7 @@ fn main() {
     if let Some(ver) = git {
         info!("setting commit as {ver}, setting pkgrel as 1");
         if !use_sd {
-            sed(&format!(
-                "s|^_commit=.*|_commit={ver}|; s|^pkgrel=.*|pkgrel=1|"
-            ))
-            .unwrap();
+            sed(&format!("s|^_commit=.*|_commit={ver}|; s|^pkgrel=.*|pkgrel=1|")).unwrap();
         } else {
             sd("^_commit=.*", &format!("_commit={ver}")).unwrap();
             sd("^pkgrel=.*", "pkgrel=1").unwrap();
