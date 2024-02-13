@@ -85,21 +85,21 @@ fn main() {
 
     if let Some(ver) = ver {
         info!("setting `pkgver` as {ver}, setting `pkgrel` as 1");
-        if !use_sd {
-            sed(&format!("s|^pkgver=.*|pkgver={ver}|; s|^pkgrel=.*|pkgrel=1|")).unwrap();
-        } else {
+        if use_sd {
             sd("^pkgver=.*", &format!("pkgver={ver}")).unwrap();
             sd("^pkgrel=.*", "pkgrel=1").unwrap();
+        } else {
+            sed(&format!("s|^pkgver=.*|pkgver={ver}|; s|^pkgrel=.*|pkgrel=1|")).unwrap();
         }
     }
 
     if let Some(ver) = git {
         info!("setting commit as {ver}, setting pkgrel as 1");
-        if !use_sd {
-            sed(&format!("s|^_commit=.*|_commit={ver}|; s|^pkgrel=.*|pkgrel=1|")).unwrap();
-        } else {
+        if use_sd {
             sd("^_commit=.*", &format!("_commit={ver}")).unwrap();
             sd("^pkgrel=.*", "pkgrel=1").unwrap();
+        } else {
+            sed(&format!("s|^_commit=.*|_commit={ver}|; s|^pkgrel=.*|pkgrel=1|")).unwrap();
         }
         if make.is_none() && make_mingw.is_none() {
             warn!("you may need to run `makepkg` manually to update `pkgver`");
