@@ -17,12 +17,12 @@ exclude = ["/.ci", "/.github"]
 [dependencies]
 clap = { version = "4", features = ["derive"] }
 log = "0"
-env_logger = "0"
+pretty_env_logger = "0"
 
 [profile.release]
-strip = true
-lto = true
 codegen-units = 1
+lto = true
+strip = true
 
 [features]
 default = ["sd"]

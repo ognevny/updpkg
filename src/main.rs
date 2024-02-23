@@ -1,6 +1,5 @@
 use {
     clap::Parser,
-    env_logger::{Builder, Env},
     log::{error, info, warn},
     std::{
         env, fs,
@@ -54,7 +53,8 @@ fn sd(old: &str, new: &str) -> Result<ExitStatus, Error> {
 }
 
 fn main() {
-    Builder::from_env(Env::default().default_filter_or("info")).init();
+    env::set_var("RUST_LOG", "info");
+    pretty_env_logger::init();
 
     let args = Args::parse();
     let (ver, dir, make, make_mingw, git, rm) =
@@ -71,12 +71,12 @@ fn main() {
     if let Some(files) = rm {
         for file in files.iter() {
             info!("removing {file} from recipe");
-            if !use_sd {
-                sed(&format!(r#"s|^.*{file}\s*||g; s|^")|)|g; s|^"$||g"#)).unwrap();
-            } else {
+            if use_sd {
                 sd(&format!(r#"^.*{file}\s*"#), "").unwrap();
                 sd(r#"^")"#, ")").unwrap();
                 sd(r#"^"$"#, "").unwrap();
+            } else {
+                sed(&format!(r#"s|^.*{file}\s*||g; s|^")|)|g; s|^"$||g"#)).unwrap();
             }
             info!("removing {file} from directory");
             fs::remove_file(file).unwrap_or_else(|e| warn!("couldn't remove file: {e}"));
