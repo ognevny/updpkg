@@ -9,6 +9,7 @@ on:
 env:
   CARGO_TERM_COLOR: always
   RUST_LOG_STYLE: always
+  RUSTFLAGS: '-C target-cpu=native'
 
 jobs:
   tarball_msys:
@@ -33,7 +34,7 @@ jobs:
             ttf-dejavu:p
             diffutils:p
       - name: build
-        run: msys2 -c 'RUSTFLAGS="-C target-cpu=native" cargo b -v --locked'
+        run: msys2 -c 'cargo b -v --locked'
       - name: test
         run: msys2 -c './.ci/tarball.sh'
   lint_macos:
@@ -48,8 +49,8 @@ jobs:
           rustup update nightly && rustup default nightly
           rustup component add rustfmt clippy
       - name: build
-        run: RUSTFLAGS="-C target-cpu=native" cargo b -v --locked
+        run: cargo b -v --locked
       - name: fmt and clippy check
         run: |
           cargo fmt -- --check
-          RUSTFLAGS="-C target-cpu=native" cargo clippy -- -D warnings
+          cargo clippy -- -D warnings
